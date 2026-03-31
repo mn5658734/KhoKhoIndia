@@ -63,6 +63,7 @@
       height:72px;
       display:flex;align-items:center;justify-content:space-between;
       gap:20px;
+      position:relative;
     }
     .brand{display:flex;align-items:center;gap:12px}
     .brand-mark{
@@ -96,13 +97,20 @@
     }
     .links a:hover{color:#fff}
     .links a:hover::after{width:100%}
-    .nav-btn{
-      background:var(--saffron);color:#fff;
-      padding:10px 16px;border-radius:8px;
-      font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;
-      transition:.25s ease;
+    .menu-toggle{
+      display:none;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      border-radius:8px;
+      width:42px;
+      height:42px;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:1.1rem;
+      line-height:1;
     }
-    .nav-btn:hover{background:var(--saffron-deep)}
 
     /* HERO */
     .hero{
@@ -400,23 +408,80 @@
     }
 
     @media (max-width:980px){
-      .links{display:none}
+      section{padding:58px 0}
       .hero-grid,.news-grid,.foot-grid{grid-template-columns:1fr}
       .stat-panel{justify-self:start}
       .event{grid-template-columns:70px 1fr}
       .event .badge,.event .btn{justify-self:start}
       .about-grid{grid-template-columns:1fr}
       .gallery{grid-template-columns:repeat(2,1fr)}
+      .menu-toggle{display:inline-flex}
+      .links{
+        position:absolute;
+        top:calc(100% + 10px);
+        right:0;
+        left:0;
+        display:none;
+        flex-direction:column;
+        gap:0;
+        background:linear-gradient(180deg,rgba(8,18,37,.98),rgba(11,35,76,.98));
+        border:1px solid rgba(255,255,255,.14);
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 16px 32px rgba(0,0,0,.35);
+      }
+      .links.open{display:flex}
+      .links a{
+        padding:14px 16px;
+        border-bottom:1px solid rgba(255,255,255,.08);
+        font-size:.95rem;
+      }
+      .links a:last-child{border-bottom:none}
+      .links a::after{display:none}
+      .title-row{align-items:flex-start;flex-direction:column}
+      .feature-media{height:240px}
+      .gallery img{height:180px}
     }
     @media (max-width:620px){
+      .container{width:min(1160px,94%)}
       .nav-wrap{height:66px}
       .brand-copy .sub{display:none}
-      .hero{min-height:86vh}
+      .brand-copy .top{font-size:.96rem}
+      .hero{min-height:78vh}
+      .hero-grid{padding:48px 0}
+      .hero h1{font-size:clamp(2.3rem,12vw,3.2rem)}
       .hero p{font-size:.92rem}
+      .hero-ctas{gap:10px}
+      .btn{padding:11px 16px;font-size:.76rem}
+      .stat-panel{padding:14px}
+      .num{font-size:1.65rem}
+      .label{font-size:.72rem}
+      .ticker-item{padding:10px 16px;font-size:.78rem}
+      h2{font-size:clamp(1.55rem,8vw,1.95rem)}
+      .section-link{font-size:.78rem}
+      .news-grid{gap:14px}
+      .feature-media{height:200px}
+      .content{padding:14px}
+      .feature-title{font-size:1.32rem}
       .mini{grid-template-columns:1fr}
       .mini img{height:150px}
+      .mini h3{font-size:1.08rem}
+      .events{gap:12px}
+      .event{
+        grid-template-columns:64px 1fr;
+        padding:12px;
+        gap:10px;
+      }
+      .event h4{font-size:1.12rem}
+      .event p{font-size:.82rem}
+      .badge,.event .btn{font-size:.68rem}
+      .gallery{margin-top:14px}
       .gallery{grid-template-columns:1fr}
+      .gallery img{height:200px}
+      .about-grid{gap:12px}
       .about-card img{height:170px}
+      .foot-grid{gap:16px}
+      .copy{font-size:.72rem}
     }
     @media (prefers-reduced-motion: reduce){
       *{animation:none !important;transition:none !important}
@@ -434,6 +499,7 @@
           <span class="sub">Powered by IndiVox</span>
         </span>
       </a>
+      <button class="menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
       <nav class="links">
         <a href="#about">About</a>
         <a href="#news">News</a>
@@ -677,6 +743,24 @@
       });
     }, { threshold: 0.35 });
     counterObserver.observe(hero);
+
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navLinks = document.querySelector(".links");
+    if (menuToggle && navLinks) {
+      menuToggle.addEventListener("click", () => {
+        const isOpen = navLinks.classList.toggle("open");
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+      });
+
+      navLinks.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.textContent = "☰";
+        });
+      });
+    }
   </script>
 </body>
 </html>
