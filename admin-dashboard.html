@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin dashboard · Kho Kho India</title>
+  <link rel="icon" href="images/kho-kho-india-logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#081225;
+      --saffron:#ff6a00;
+      --saffron-deep:#e24a00;
+      --cream:#fbf5ec;
+      --muted:#60708a;
+      --border:#e6d9c8;
+      --card:#fff;
+      --radius:12px;
+      --text:#1b2a45;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Barlow",sans-serif;
+      background:linear-gradient(180deg,#fffaf3,#fff);
+      color:var(--text);
+      min-height:100vh;
+      padding:20px 16px 48px;
+    }
+    .top{
+      max-width:1180px;margin:0 auto 20px;
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .top h1{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.6rem;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .top h1 img{height:40px;width:auto}
+    .actions{display:flex;flex-wrap:wrap;gap:8px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 16px;border-radius:8px;
+      font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+      border:none;cursor:pointer;font-family:inherit;text-decoration:none;
+    }
+    .btn-primary{background:linear-gradient(135deg,var(--saffron),var(--saffron-deep));color:#fff}
+    .btn-ghost{background:#fff;border:1px solid var(--border);color:var(--navy)}
+    .btn-danger{background:#b42318;color:#fff}
+    .admin-layout{
+      max-width:1180px;margin:0 auto;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:20px;
+      align-items:start;
+    }
+    @media(min-width:1060px){
+      .admin-layout{grid-template-columns:minmax(0,1fr) minmax(320px,400px)}
+    }
+    .edit-column{display:flex;flex-direction:column;gap:0}
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px 18px;
+      margin-bottom:18px;
+      box-shadow:0 8px 24px rgba(8,18,37,.06);
+    }
+    .panel h2{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:1.15rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      margin-bottom:6px;
+      color:var(--navy);
+    }
+    .panel .site-line{
+      font-size:.8rem;color:var(--muted);
+      margin-bottom:14px;
+      line-height:1.4;
+    }
+    .panel .site-line code{font-size:.78rem;background:var(--cream);padding:1px 6px;border-radius:4px}
+    label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:4px}
+    input[type="text"],input[type="file"],textarea,select{
+      width:100%;padding:10px 12px;border:1px solid var(--border);
+      border-radius:8px;font-family:inherit;font-size:.9rem;margin-bottom:10px;
+    }
+    input[type="file"]{padding:8px;font-size:.85rem}
+    textarea{min-height:88px;resize:vertical}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:640px){.row2{grid-template-columns:1fr}}
+    .event-block{
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px;
+      margin-bottom:12px;
+      background:var(--cream);
+    }
+    .event-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .event-head span{font-weight:700;font-size:.85rem}
+    .stake-block{
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:14px;
+      margin-bottom:12px;
+      background:#f8fafc;
+    }
+    .gallery-upload-row{
+      display:grid;
+      grid-template-columns:72px 1fr auto;
+      gap:10px;
+      align-items:center;
+      margin-bottom:10px;
+      padding:10px;
+      background:var(--cream);
+      border-radius:8px;
+      border:1px solid var(--border);
+    }
+    .gallery-upload-row img{width:72px;height:54px;object-fit:cover;border-radius:6px}
+    .gallery-upload-row .gal-upload-alt{margin-bottom:0}
+    .upload-note{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.4}
+
+    /* Live preview — matches homepage section titles & tone */
+    .preview-sticky{
+      position:sticky;top:16px;
+    }
+    .preview-panel{
+      background:var(--card);
+      border:2px solid var(--navy);
+      border-radius:var(--radius);
+      padding:18px 16px;
+      box-shadow:0 12px 32px rgba(8,18,37,.12);
+    }
+    .preview-panel > .preview-label{
+      font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:var(--muted);margin-bottom:12px;
+    }
+    .preview-h2{
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(1.25rem,2.5vw,1.5rem);
+      text-transform:uppercase;
+      line-height:.95;
+      color:var(--navy);
+      margin:20px 0 12px;
+    }
+    .preview-h2:first-of-type{margin-top:0}
+    .preview-h2 span{color:var(--saffron)}
+    .preview-intro{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.55;
+      margin-bottom:14px;
+    }
+    .pv-events{display:flex;flex-direction:column;gap:8px}
+    .pv-event{
+      background:#fff;border:1px solid var(--border);
+      border-radius:10px;padding:10px 12px;
+      display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:center;
+      font-size:.82rem;
+    }
+    .pv-event .pv-date{text-align:center}
+    .pv-event .pv-day{font-family:"Barlow Condensed",sans-serif;font-size:1.35rem;font-weight:800;line-height:1;color:var(--navy)}
+    .pv-event .pv-month{font-size:.65rem;font-weight:700;color:var(--saffron);text-transform:uppercase}
+    .pv-event h4{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;margin-bottom:2px}
+    .pv-event p{color:var(--muted);font-size:.78rem}
+    .pv-badge{display:inline-block;margin-top:4px;padding:3px 8px;border-radius:999px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .pv-badge.national{background:rgba(19,136,8,.12);color:#138808}
+    .pv-badge.league{background:rgba(255,106,0,.13);color:var(--saffron-deep)}
+    .pv-badge.intl{background:rgba(8,18,37,.08);color:var(--navy)}
+    .pv-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+    .pv-gallery img{width:100%;height:72px;object-fit:cover;border-radius:8px}
+    .pv-about{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:400px){.pv-about{grid-template-columns:1fr 1fr}}
+    .pv-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+    .pv-card img{width:100%;height:90px;object-fit:cover}
+    .pv-card .body{padding:8px}
+    .pv-card .tag{display:inline-block;font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--saffron-deep);background:rgba(255,106,0,.12);padding:2px 6px;border-radius:4px;margin-bottom:4px}
+    .pv-card h3{font-family:"Barlow Condensed",sans-serif;font-size:.85rem;line-height:1.15;margin-bottom:4px}
+    .pv-card p{font-size:.72rem;color:var(--muted);line-height:1.35}
+
+    .toast{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+      background:var(--navy);color:#fff;padding:12px 20px;border-radius:8px;
+      font-size:.88rem;box-shadow:0 8px 24px rgba(0,0,0,.2);
+      opacity:0;pointer-events:none;transition:opacity .25s;
+      z-index:100;
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h1>
+      <img src="images/kho-kho-india-logo.png" alt="">
+      Admin dashboard
+    </h1>
+    <div class="actions">
+      <a class="btn btn-ghost" href="index.html" target="_blank" rel="noopener">View website</a>
+      <button type="button" class="btn btn-danger" id="logout">Log out</button>
+    </div>
+  </div>
+
+  <div class="admin-layout" id="adminLayout">
+    <div class="edit-column">
+      <div class="panel">
+        <h2>About <span style="color:var(--saffron)">Us</span></h2>
+        <p class="site-line">Homepage shows this exact paragraph under the heading <strong>About</strong> <strong style="color:var(--saffron)">Us</strong> (same wording visitors see).</p>
+        <label for="aboutIntro">Intro paragraph (website text)</label>
+        <textarea id="aboutIntro"></textarea>
+      </div>
+
+      <div class="panel">
+        <h2>Upcoming <span style="color:var(--saffron)">Events</span></h2>
+        <p class="site-line">Same block as homepage <strong>Upcoming</strong> <strong style="color:var(--saffron)">Events</strong> — each row matches what visitors see.</p>
+        <div id="eventsContainer"></div>
+        <button type="button" class="btn btn-ghost" id="addEvent">+ Add event</button>
+      </div>
+
+      <div class="panel">
+        <h2>Photo <span style="color:var(--saffron)">Highlights</span></h2>
+        <p class="site-line">Homepage <strong>Photo</strong> <strong style="color:var(--saffron)">Highlights</strong> — URLs below plus uploaded images (stored in your browser until you add server storage).</p>
+        <label for="galleryLines">Image URLs (one per line). Optional: <code>url | caption</code></label>
+        <textarea id="galleryLines" style="min-height:120px"></textarea>
+        <label for="galleryFiles">Upload photos</label>
+        <input type="file" id="galleryFiles" accept="image/*" multiple>
+        <p class="upload-note">Uploads are embedded as data URLs in local storage for now (max ~2.5MB per file). Replace with server upload when storage is ready.</p>
+        <div id="galleryUploadList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>About <span style="color:var(--saffron)">Us</span> — stakeholders</h2>
+        <p class="site-line">Cards under the intro on the homepage — same titles and body text visitors see.</p>
+        <div id="stakeContainer"></div>
+        <button type="button" class="btn btn-ghost" id="addStake">+ Add stakeholder</button>
+      </div>
+
+      <div class="actions" style="margin-top:0;margin-bottom:24px">
+        <button type="button" class="btn btn-primary" id="saveAll">Save to website</button>
+        <button type="button" class="btn btn-ghost" id="resetDefaults">Reset to defaults</button>
+      </div>
+    </div>
+
+    <aside class="preview-sticky">
+      <div class="preview-panel">
+        <div class="preview-label">Live preview — same copy as website</div>
+        <h2 class="preview-h2">Upcoming <span>Events</span></h2>
+        <div class="pv-events" id="preview-events"></div>
+
+        <h2 class="preview-h2">Photo <span>Highlights</span></h2>
+        <div class="pv-gallery" id="preview-gallery"></div>
+
+        <h2 class="preview-h2">About <span>Us</span></h2>
+        <p class="preview-intro" id="preview-about-intro"></p>
+        <div class="pv-about" id="preview-stakeholders"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast">Saved. Open or refresh the homepage to see changes.</div>
+
+  <script>
+    var SESSION_KEY = "kkfi_admin_session";
+    var STORAGE_KEY = "kkfi_site_content";
+    var MAX_UPLOAD_MB = 2.5;
+
+    var DEFAULT = {
+      version: 1,
+      events: [
+        { day: "31", month: "Mar", title: "57th Senior National Championship", location: "District Sports Complex, Puri, Odisha", badge: "national", badgeLabel: "National", cta: "Details", ctaHref: "#" },
+        { day: "15", month: "May", title: "Ultimate Kho Kho League - Season 4", location: "Multiple Venues · Pan India", badge: "league", badgeLabel: "League", cta: "Register", ctaHref: "#" },
+        { day: "22", month: "Jun", title: "Asian Kho Kho Championship", location: "Host city announcement coming soon", badge: "intl", badgeLabel: "International", cta: "Updates", ctaHref: "#" }
+      ],
+      gallery: [
+        { url: "https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&w=1200&q=80", alt: "Team huddle before match" },
+        { url: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=1200&q=80", alt: "Athlete sprint on ground" },
+        { url: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80", alt: "Stadium under floodlights" },
+        { url: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80", alt: "Trophy and celebration moment" }
+      ],
+      stakeholders: [
+        { image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80", tag: "Leadership", title: "President's Message", body: "Placeholder panel for the President's message and profile details." },
+        { image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80", tag: "Leadership", title: "President's Message", body: "Placeholder panel for the President's message and profile details." }
+      ],
+      aboutIntro: "Placeholder section for federation background, leadership notes, mission, and governance details. Replace this content with final approved About Us copy."
+    };
+
+    var galleryUploads = [];
+
+    if (sessionStorage.getItem(SESSION_KEY) !== "1") {
+      window.location.replace("admin-login.html");
+    }
+
+    function loadContent() {
+      try {
+        var s = localStorage.getItem(STORAGE_KEY);
+        if (s) {
+          var p = JSON.parse(s);
+          if (p && p.version) return p;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(DEFAULT));
+    }
+
+    function showToast() {
+      var t = document.getElementById("toast");
+      t.classList.add("show");
+      setTimeout(function () { t.classList.remove("show"); }, 3200);
+    }
+
+    function isDataUrl(u) {
+      return String(u || "").indexOf("data:") === 0;
+    }
+
+    function partitionGallery(g) {
+      var urlItems = [];
+      var uploads = [];
+      (g || []).forEach(function (x) {
+        var u = x.url != null ? x.url : x;
+        var item = typeof x === "string" ? { url: x, alt: "Gallery photo" } : { url: u, alt: x.alt != null ? x.alt : "Gallery photo" };
+        if (isDataUrl(item.url)) uploads.push(item);
+        else if (item.url) urlItems.push(item);
+      });
+      return { urlItems: urlItems, uploads: uploads };
+    }
+
+    function galleryUrlsToText(urlItems) {
+      return urlItems
+        .map(function (x) {
+          var u = x.url || x;
+          var a = x.alt != null ? x.alt : "";
+          return a && a !== "Gallery photo" ? u + " | " + a : u;
+        })
+        .join("\n");
+    }
+
+    function esc(s) {
+      if (s == null) return "";
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function badgePreviewClass(b) {
+      if (b === "league") return "league";
+      if (b === "intl") return "intl";
+      return "national";
+    }
+
+    function syncUploadAltsFromDom() {
+      document.querySelectorAll(".gallery-upload-row").forEach(function (row, idx) {
+        if (galleryUploads[idx]) {
+          var inp = row.querySelector(".gal-upload-alt");
+          if (inp) galleryUploads[idx].alt = inp.value.trim() || galleryUploads[idx].alt || "Gallery photo";
+        }
+      });
+    }
+
+    function getCombinedGallery() {
+      syncUploadAltsFromDom();
+      return parseGalleryText(document.getElementById("galleryLines").value).concat(galleryUploads);
+    }
+
+    function updatePreview() {
+      syncUploadAltsFromDom();
+      var events = readEventsFromDom();
+      var gallery = getCombinedGallery();
+      var stakeholders = readStakeholdersFromDom();
+      var intro = document.getElementById("aboutIntro").value;
+
+      var pe = document.getElementById("preview-events");
+      pe.innerHTML = events
+        .map(function (ev) {
+          var bl = ev.badgeLabel || (ev.badge === "league" ? "League" : ev.badge === "intl" ? "International" : "National");
+          return (
+            '<div class="pv-event">' +
+            '<div class="pv-date"><div class="pv-day">' +
+            esc(ev.day) +
+            '</div><div class="pv-month">' +
+            esc(ev.month) +
+            "</div></div>" +
+            "<div><h4>" +
+            esc(ev.title) +
+            "</h4><p>" +
+            esc(ev.location) +
+            '</p><span class="pv-badge ' +
+            badgePreviewClass(ev.badge) +
+            '">' +
+            esc(bl) +
+            "</span></div></div>"
+          );
+        })
+        .join("");
+
+      var pg = document.getElementById("preview-gallery");
+      pg.innerHTML = gallery
+        .map(function (g) {
+          var u = g.url || g;
+          var a = g.alt != null ? g.alt : "Gallery photo";
+          return '<img src="' + esc(u) + '" alt="' + esc(a) + '">';
+        })
+        .join("");
+
+      document.getElementById("preview-about-intro").textContent = intro;
+
+      var ps = document.getElementById("preview-stakeholders");
+      var PLACEHOLDER =
+        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80";
+      ps.innerHTML = stakeholders
+        .map(function (s) {
+          var img = (s.image && s.image.trim()) ? s.image : PLACEHOLDER;
+          return (
+            '<div class="pv-card">' +
+            '<img src="' +
+            esc(img) +
+            '" alt="">' +
+            '<div class="body"><span class="tag">' +
+            esc(s.tag || "Stakeholder") +
+            '</span><h3>' +
+            esc(s.title) +
+            "</h3><p>" +
+            esc(s.body) +
+            "</p></div></div>"
+          );
+        })
+        .join("");
+    }
+
+    var previewTimer;
+    function schedulePreview() {
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(updatePreview, 100);
+    }
+
+    var state = loadContent();
+    document.getElementById("aboutIntro").value = state.aboutIntro || "";
+
+    var gp = partitionGallery(state.gallery || []);
+    document.getElementById("galleryLines").value = galleryUrlsToText(gp.urlItems);
+    galleryUploads = gp.uploads;
+
+    function renderGalleryUploads() {
+      var el = document.getElementById("galleryUploadList");
+      el.innerHTML = "";
+      galleryUploads.forEach(function (item, idx) {
+        var row = document.createElement("div");
+        row.className = "gallery-upload-row";
+        var thumb = document.createElement("img");
+        thumb.alt = "";
+        thumb.src = item.url;
+        var inp = document.createElement("input");
+        inp.type = "text";
+        inp.className = "gal-upload-alt";
+        inp.placeholder = "Caption (website alt text)";
+        inp.dataset.idx = String(idx);
+        inp.value = item.alt || "";
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-ghost rm-upload";
+        btn.dataset.idx = String(idx);
+        btn.style.cssText = "padding:8px 10px;font-size:.7rem";
+        btn.textContent = "Remove";
+        row.appendChild(thumb);
+        row.appendChild(inp);
+        row.appendChild(btn);
+        el.appendChild(row);
+      });
+      el.querySelectorAll(".rm-upload").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var i = parseInt(btn.getAttribute("data-idx"), 10);
+          galleryUploads.splice(i, 1);
+          renderGalleryUploads();
+          schedulePreview();
+        });
+      });
+      el.querySelectorAll(".gal-upload-alt").forEach(function (inp) {
+        inp.addEventListener("input", schedulePreview);
+      });
+      schedulePreview();
+    }
+
+    document.getElementById("galleryFiles").addEventListener("change", function (e) {
+      var files = e.target.files;
+      if (!files || !files.length) return;
+      var maxBytes = MAX_UPLOAD_MB * 1024 * 1024;
+      var pending = Array.from(files).filter(function (f) { return f.type.indexOf("image/") === 0; });
+      var i = 0;
+      function next() {
+        if (i >= pending.length) {
+          e.target.value = "";
+          renderGalleryUploads();
+          return;
+        }
+        var file = pending[i++];
+        if (file.size > maxBytes) {
+          alert(file.name + " is larger than " + MAX_UPLOAD_MB + "MB. Choose a smaller image or compress it.");
+          next();
+          return;
+        }
+        var r = new FileReader();
+        r.onload = function () {
+          var base = (file.name || "photo").replace(/\.[^.]+$/, "") || "Uploaded photo";
+          galleryUploads.push({ url: r.result, alt: base });
+          next();
+        };
+        r.onerror = next;
+        r.readAsDataURL(file);
+      }
+      next();
+    });
+
+    function renderEvents() {
+      var c = document.getElementById("eventsContainer");
+      c.innerHTML = "";
+      (state.events || []).forEach(function (ev, idx) {
+        var div = document.createElement("div");
+        div.className = "event-block";
+        div.innerHTML =
+          '<div class="event-head"><span>Event ' +
+          (idx + 1) +
+          '</span><button type="button" class="btn btn-ghost rm-event" data-i="' +
+          idx +
+          '" style="padding:6px 10px;font-size:.72rem">Remove</button></div>' +
+          '<div class="row2">' +
+          '<div><label>Day</label><input type="text" class="ev-day" value=""></div>' +
+          '<div><label>Month</label><input type="text" class="ev-month" value=""></div></div>' +
+          '<label>Title</label><input type="text" class="ev-title" value="">' +
+          '<label>Location</label><input type="text" class="ev-loc" value="">' +
+          '<div class="row2">' +
+          '<div><label>Badge style</label><select class="ev-badge"><option value="national">National</option><option value="league">League</option><option value="intl">International</option></select></div>' +
+          '<div><label>Badge label (optional)</label><input type="text" class="ev-blabel" placeholder="e.g. National"></div></div>' +
+          '<div class="row2">' +
+          '<div><label>Button text</label><input type="text" class="ev-cta"></div>' +
+          '<div><label>Button link</label><input type="text" class="ev-href" placeholder="#"></div></div>';
+        c.appendChild(div);
+        div.querySelector(".ev-day").value = ev.day || "";
+        div.querySelector(".ev-month").value = ev.month || "";
+        div.querySelector(".ev-title").value = ev.title || "";
+        div.querySelector(".ev-loc").value = ev.location || "";
+        div.querySelector(".ev-badge").value = ev.badge || "national";
+        div.querySelector(".ev-blabel").value = ev.badgeLabel || "";
+        div.querySelector(".ev-cta").value = ev.cta || "Details";
+        div.querySelector(".ev-href").value = ev.ctaHref || "#";
+      });
+      c.querySelectorAll(".rm-event").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          state.events = readEventsFromDom();
+          state.events.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
+          renderEvents();
+          renderStakeholders();
+        });
+      });
+      c.querySelectorAll("input,select").forEach(function (el) {
+        el.addEventListener("input", schedulePreview);
+        el.addEventListener("change", schedulePreview);
+      });
+      schedulePreview();
+    }
+
+    function readEventsFromDom() {
+      var blocks = document.querySelectorAll(".event-block");
+      var list = [];
+      blocks.forEach(function (block) {
+        list.push({
+          day: block.querySelector(".ev-day").value,
+          month: block.querySelector(".ev-month").value,
+          title: block.querySelector(".ev-title").value,
+          location: block.querySelector(".ev-loc").value,
+          badge: block.querySelector(".ev-badge").value,
+          badgeLabel: block.querySelector(".ev-blabel").value,
+          cta: block.querySelector(".ev-cta").value.trim() || "Details",
+          ctaHref: block.querySelector(".ev-href").value.trim() || "#"
+        });
+      });
+      return list;
+    }
+
+    function renderStakeholders() {
+      var c = document.getElementById("stakeContainer");
+      c.innerHTML = "";
+      (state.stakeholders || []).forEach(function (st, idx) {
+        var div = document.createElement("div");
+        div.className = "stake-block";
+        div.innerHTML =
+          '<div class="event-head"><span>Stakeholder ' +
+          (idx + 1) +
+          '</span><button type="button" class="btn btn-ghost rm-stake" data-i="' +
+          idx +
+          '" style="padding:6px 10px;font-size:.72rem">Remove</button></div>' +
+          '<label>Photo URL</label><input type="text" class="st-img" placeholder="https://...">' +
+          '<div class="row2">' +
+          '<div><label>Tag</label><input type="text" class="st-tag" placeholder="Leadership"></div>' +
+          '<div><label>Title / name</label><input type="text" class="st-title"></div></div>' +
+          '<label>Description</label><textarea class="st-body"></textarea>';
+        c.appendChild(div);
+        div.querySelector(".st-img").value = st.image || "";
+        div.querySelector(".st-tag").value = st.tag || "";
+        div.querySelector(".st-title").value = st.title || "";
+        div.querySelector(".st-body").value = st.body || "";
+      });
+      c.querySelectorAll(".rm-stake").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          state.stakeholders = readStakeholdersFromDom();
+          state.stakeholders.splice(parseInt(btn.getAttribute("data-i"), 10), 1);
+          renderEvents();
+          renderStakeholders();
+        });
+      });
+      c.querySelectorAll("input,textarea").forEach(function (el) {
+        el.addEventListener("input", schedulePreview);
+      });
+      schedulePreview();
+    }
+
+    function readStakeholdersFromDom() {
+      var blocks = document.querySelectorAll(".stake-block");
+      var list = [];
+      blocks.forEach(function (block) {
+        list.push({
+          image: block.querySelector(".st-img").value,
+          tag: block.querySelector(".st-tag").value.trim() || "Stakeholder",
+          title: block.querySelector(".st-title").value,
+          body: block.querySelector(".st-body").value
+        });
+      });
+      return list;
+    }
+
+    function parseGalleryText(text) {
+      return text
+        .split("\n")
+        .map(function (l) { return l.trim(); })
+        .filter(Boolean)
+        .filter(function (line) { return line.indexOf("data:") !== 0; })
+        .map(function (line) {
+          var pipe = line.indexOf("|");
+          if (pipe === -1) return { url: line, alt: "Gallery photo" };
+          return {
+            url: line.slice(0, pipe).trim(),
+            alt: line.slice(pipe + 1).trim() || "Gallery photo"
+          };
+        })
+        .filter(function (x) { return x.url; });
+    }
+
+    document.getElementById("aboutIntro").addEventListener("input", schedulePreview);
+
+    document.getElementById("galleryLines").addEventListener("input", schedulePreview);
+
+    document.getElementById("addEvent").addEventListener("click", function () {
+      state.events = readEventsFromDom();
+      state.events.push({
+        day: "",
+        month: "",
+        title: "",
+        location: "",
+        badge: "national",
+        badgeLabel: "",
+        cta: "Details",
+        ctaHref: "#"
+      });
+      renderEvents();
+      renderStakeholders();
+    });
+
+    document.getElementById("addStake").addEventListener("click", function () {
+      state.stakeholders = readStakeholdersFromDom();
+      state.stakeholders.push({
+        image: "",
+        tag: "Stakeholder",
+        title: "",
+        body: ""
+      });
+      renderEvents();
+      renderStakeholders();
+    });
+
+    document.getElementById("saveAll").addEventListener("click", function () {
+      state.events = readEventsFromDom();
+      state.stakeholders = readStakeholdersFromDom();
+      syncUploadAltsFromDom();
+      state.gallery = parseGalleryText(document.getElementById("galleryLines").value).concat(galleryUploads);
+      state.aboutIntro = document.getElementById("aboutIntro").value;
+      state.version = 1;
+      if (!state.events.length) {
+        alert("Add at least one event, or use Reset to defaults.");
+        return;
+      }
+      if (!state.gallery.length) {
+        alert("Add at least one gallery image (URL or upload), or use Reset to defaults.");
+        return;
+      }
+      if (!state.stakeholders.length) {
+        alert("Add at least one stakeholder card, or use Reset to defaults.");
+        return;
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      showToast();
+    });
+
+    document.getElementById("resetDefaults").addEventListener("click", function () {
+      if (!confirm("Reset all homepage content to the original defaults?")) return;
+      state = JSON.parse(JSON.stringify(DEFAULT));
+      document.getElementById("aboutIntro").value = state.aboutIntro;
+      var p = partitionGallery(state.gallery || []);
+      document.getElementById("galleryLines").value = galleryUrlsToText(p.urlItems);
+      galleryUploads = p.uploads;
+      renderGalleryUploads();
+      renderEvents();
+      renderStakeholders();
+      localStorage.removeItem(STORAGE_KEY);
+      showToast();
+    });
+
+    document.getElementById("logout").addEventListener("click", function () {
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.replace("admin-login.html");
+    });
+
+    renderEvents();
+    renderStakeholders();
+    renderGalleryUploads();
+    updatePreview();
+  </script>
+</body>
+</html>

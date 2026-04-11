@@ -97,6 +97,25 @@
     }
     .links a:hover{color:#fff}
     .links a:hover::after{width:100%}
+    .links a.nav-admin{
+      margin-left:4px;
+      padding:9px 18px;
+      border-radius:8px;
+      background:linear-gradient(135deg,var(--saffron),var(--saffron-deep));
+      color:#fff;
+      font-weight:700;
+      font-size:.78rem;
+      letter-spacing:1.1px;
+      text-transform:uppercase;
+      box-shadow:var(--glow);
+      transition:transform .2s ease, filter .2s ease;
+    }
+    .links a.nav-admin::after{display:none !important}
+    .links a.nav-admin:hover{
+      color:#fff;
+      transform:translateY(-1px);
+      filter:brightness(1.06);
+    }
     .menu-toggle{
       display:none;
       border:1px solid rgba(255,255,255,.25);
@@ -445,6 +464,11 @@
         font-size:.95rem;
       }
       .links a:last-child{border-bottom:none}
+      .links a.nav-admin{
+        margin:10px 14px 14px;
+        text-align:center;
+        border-bottom:none !important;
+      }
       .links a::after{display:none}
       .title-row{align-items:flex-start;flex-direction:column}
       .feature-media{height:240px}
@@ -516,6 +540,7 @@
         <a href="#events">Events</a>
         <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
+        <a href="admin-login.html" class="nav-admin">Admin</a>
       </nav>
     </div>
   </header>
@@ -609,7 +634,7 @@
         <h2>Upcoming <span>Events</span></h2>
         <a href="#" class="section-link">Full Calendar -></a>
       </div>
-      <div class="events">
+      <div class="events" id="events-list">
         <article class="event reveal">
           <div class="date"><div class="day">31</div><div class="month">Mar</div></div>
           <div><h4>57th Senior National Championship</h4><p>District Sports Complex, Puri, Odisha</p></div>
@@ -638,7 +663,7 @@
         <h2>Photo <span>Highlights</span></h2>
         <a href="#" class="section-link">View Gallery -></a>
       </div>
-      <div class="gallery">
+      <div class="gallery" id="gallery-grid">
         <img class="reveal" src="https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&w=1200&q=80" alt="Team huddle before match">
         <img class="reveal" src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=1200&q=80" alt="Athlete sprint on ground">
         <img class="reveal" src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80" alt="Stadium under floodlights">
@@ -653,11 +678,11 @@
         <h2>About <span>Us</span></h2>
         <a href="#contact" class="section-link">Contact -></a>
       </div>
-      <p class="muted reveal" style="margin-bottom:16px;">
+      <p class="muted reveal" id="about-intro" style="margin-bottom:16px;">
         Placeholder section for federation background, leadership notes, mission, and governance details.
         Replace this content with final approved About Us copy.
       </p>
-      <div class="about-grid">
+      <div class="about-grid" id="about-stakeholders">
         <article class="about-card reveal">
           <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80" alt="Dummy profile placeholder image">
           <div class="content">
@@ -714,6 +739,140 @@
   </footer>
 
   <script>
+    (function applyAdminSiteContent() {
+      const KEY = "kkfi_site_content";
+      const DEFAULT = {
+        version: 1,
+        events: [
+          { day: "31", month: "Mar", title: "57th Senior National Championship", location: "District Sports Complex, Puri, Odisha", badge: "national", badgeLabel: "National", cta: "Details", ctaHref: "#" },
+          { day: "15", month: "May", title: "Ultimate Kho Kho League - Season 4", location: "Multiple Venues · Pan India", badge: "league", badgeLabel: "League", cta: "Register", ctaHref: "#" },
+          { day: "22", month: "Jun", title: "Asian Kho Kho Championship", location: "Host city announcement coming soon", badge: "intl", badgeLabel: "International", cta: "Updates", ctaHref: "#" }
+        ],
+        gallery: [
+          { url: "https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&w=1200&q=80", alt: "Team huddle before match" },
+          { url: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=1200&q=80", alt: "Athlete sprint on ground" },
+          { url: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80", alt: "Stadium under floodlights" },
+          { url: "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80", alt: "Trophy and celebration moment" }
+        ],
+        stakeholders: [
+          { image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80", tag: "Leadership", title: "President's Message", body: "Placeholder panel for the President's message and profile details." },
+          { image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80", tag: "Leadership", title: "President's Message", body: "Placeholder panel for the President's message and profile details." }
+        ],
+        aboutIntro: "Placeholder section for federation background, leadership notes, mission, and governance details. Replace this content with final approved About Us copy."
+      };
+
+      function read() {
+        try {
+          const s = localStorage.getItem(KEY);
+          if (!s) return null;
+          const p = JSON.parse(s);
+          return p && p.version ? p : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function esc(s) {
+        if (s == null) return "";
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function badgeClass(b) {
+        if (b === "league") return "badge league";
+        if (b === "intl") return "badge intl";
+        return "badge";
+      }
+
+      const data = read() || DEFAULT;
+      const PLACEHOLDER_FACE =
+        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=1200&q=80";
+
+      const eventsEl = document.getElementById("events-list");
+      if (eventsEl && Array.isArray(data.events) && data.events.length) {
+        eventsEl.innerHTML = data.events
+          .map(function (ev) {
+            const label =
+              ev.badgeLabel ||
+              (ev.badge === "league" ? "League" : ev.badge === "intl" ? "International" : "National");
+            return (
+              '<article class="event reveal">' +
+              '<div class="date"><div class="day">' +
+              esc(ev.day) +
+              '</div><div class="month">' +
+              esc(ev.month) +
+              "</div></div>" +
+              "<div><h4>" +
+              esc(ev.title) +
+              "</h4><p>" +
+              esc(ev.location) +
+              "</p></div>" +
+              '<span class="' +
+              badgeClass(ev.badge) +
+              '">' +
+              esc(label) +
+              "</span>" +
+              '<a href="' +
+              esc(ev.ctaHref || "#") +
+              '" class="btn btn-ghost">' +
+              esc(ev.cta || "Details") +
+              "</a>" +
+              "</article>"
+            );
+          })
+          .join("");
+      }
+
+      const galleryEl = document.getElementById("gallery-grid");
+      if (galleryEl && Array.isArray(data.gallery) && data.gallery.length) {
+        galleryEl.innerHTML = data.gallery
+          .map(function (g) {
+            const u = g.url || g;
+            const a = g.alt != null ? g.alt : "Gallery photo";
+            return (
+              '<img class="reveal" src="' + esc(u) + '" alt="' + esc(a) + '">'
+            );
+          })
+          .join("");
+      }
+
+      const introEl = document.getElementById("about-intro");
+      if (introEl && data.aboutIntro) {
+        introEl.textContent = data.aboutIntro;
+      }
+
+      const stakeEl = document.getElementById("about-stakeholders");
+      if (stakeEl && Array.isArray(data.stakeholders) && data.stakeholders.length) {
+        stakeEl.innerHTML = data.stakeholders
+          .map(function (s) {
+            var imgSrc = (s.image && String(s.image).trim()) ? s.image : PLACEHOLDER_FACE;
+            return (
+              '<article class="about-card reveal">' +
+              '<img src="' +
+              esc(imgSrc) +
+              '" alt="' +
+              esc(s.title) +
+              '">' +
+              '<div class="content">' +
+              '<span class="tag">' +
+              esc(s.tag || "Stakeholder") +
+              '</span>' +
+              '<h3 class="feature-title" style="font-size:1.35rem;">' +
+              esc(s.title) +
+              "</h3>" +
+              '<p class="muted">' +
+              esc(s.body) +
+              "</p>" +
+              "</div></article>"
+            );
+          })
+          .join("");
+      }
+    })();
+
     const reveals = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
